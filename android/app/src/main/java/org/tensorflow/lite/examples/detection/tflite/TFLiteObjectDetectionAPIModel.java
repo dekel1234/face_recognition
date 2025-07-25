@@ -95,8 +95,9 @@ public class TFLiteObjectDetectionAPIModel
 // Face Mask Detector Output
   private float[][] output;
 
-  public HashMap<String, Recognition> registered = new HashMap<>();
-  public void register(String name, Recognition rec) {
+  public static HashMap<String, Recognition> registered = new HashMap<>();
+  public  void register(String name, Recognition rec) {
+    rec.title = name;
       registered.put(name, rec);
   }
 

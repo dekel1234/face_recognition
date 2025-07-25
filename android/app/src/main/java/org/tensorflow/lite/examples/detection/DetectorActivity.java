@@ -32,6 +32,7 @@ import android.hardware.camera2.CameraCharacteristics;
 import android.media.ImageReader.OnImageAvailableListener;
 import android.os.Bundle;
 import android.os.SystemClock;
+import android.util.Pair;
 import android.util.Size;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
@@ -52,6 +53,8 @@ import com.google.mlkit.vision.face.FaceDetectorOptions;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Queue;
+
 import org.tensorflow.lite.examples.detection.customview.OverlayView;
 import org.tensorflow.lite.examples.detection.customview.OverlayView.DrawCallback;
 import org.tensorflow.lite.examples.detection.env.BorderedText;
@@ -60,6 +63,11 @@ import org.tensorflow.lite.examples.detection.env.Logger;
 import org.tensorflow.lite.examples.detection.tflite.SimilarityClassifier;
 import org.tensorflow.lite.examples.detection.tflite.TFLiteObjectDetectionAPIModel;
 import org.tensorflow.lite.examples.detection.tracking.MultiBoxTracker;
+
+import io.opencensus.trace.Link;
+import okhttp3.MultipartBody;
+import okhttp3.Request;
+import okhttp3.RequestBody;
 
 /**
  * An activity that uses a TensorFlowMultiBoxDetector and ObjectTracker to detect and then track
@@ -131,6 +139,7 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
 
   //private HashMap<String, Classifier.Recognition> knownFaces = new HashMap<>();
 
+  public static Queue<Pair<String, Long>> updates = new LinkedList<>();
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -307,14 +316,7 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
                   if(rec != null && rec.getStartTime() != -1){
                     long elapsedTime = rec.getEndTime() - rec.getStartTime();
                     LOGGER.e("PREFIX" + Long.toString(elapsedTime));
-                    LOGGER.e(Long.toString(elapsedTime));
-                    LOGGER.e(Long.toString(elapsedTime));
-                    LOGGER.e(Long.toString(elapsedTime));
-                //    try {
-                      // SheetsQuickstart.update(TFLiteObjectDetectionAPIModel.lastRecognized, elapsedTime);
-                    //} catch (IOException | GeneralSecurityException e) {
-                  //    throw new RuntimeException(e);
-                  //  }
+                    updates.add(new Pair<>(rec.getTitle(), elapsedTime));
                     rec.setStartTime(-1);
                   }
                   return;

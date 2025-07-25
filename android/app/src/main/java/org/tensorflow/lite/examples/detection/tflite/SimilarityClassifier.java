@@ -45,7 +45,7 @@ public interface SimilarityClassifier {
     private final String id;
 
     /** Display name for the recognition. */
-    private final String title;
+    public String title;
 
     /**
      * A sortable score for how good the recognition is relative to others. Lower should be better.
