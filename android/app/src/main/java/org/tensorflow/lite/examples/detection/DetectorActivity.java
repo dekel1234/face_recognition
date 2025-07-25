@@ -18,6 +18,7 @@ package org.tensorflow.lite.examples.detection;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
 import android.graphics.Canvas;
@@ -65,7 +66,7 @@ import org.tensorflow.lite.examples.detection.tracking.MultiBoxTracker;
  * objects.
  */
 public class DetectorActivity extends CameraActivity implements OnImageAvailableListener {
-  private static final Logger LOGGER = new Logger();
+  public static final Logger LOGGER = new Logger();
 
 
   // FaceNet
@@ -155,7 +156,8 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
     FaceDetector detector = FaceDetection.getClient(options);
 
     faceDetector = detector;
-
+    Intent intent = new Intent(DetectorActivity.this, WifiService.class);
+    startService(intent);
 
     //checkWritePermission();
 
@@ -301,8 +303,23 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
               public void onSuccess(List<Face> faces) {
                 if (faces.size() == 0) {
                   updateResults(currTimestamp, new LinkedList<>());
+                  SimilarityClassifier.Recognition rec = ((TFLiteObjectDetectionAPIModel) detector).registered.get(TFLiteObjectDetectionAPIModel.lastRecognized);
+                  if(rec != null && rec.getStartTime() != -1){
+                    long elapsedTime = rec.getEndTime() - rec.getStartTime();
+                    LOGGER.e("PREFIX" + Long.toString(elapsedTime));
+                    LOGGER.e(Long.toString(elapsedTime));
+                    LOGGER.e(Long.toString(elapsedTime));
+                    LOGGER.e(Long.toString(elapsedTime));
+                //    try {
+                      // SheetsQuickstart.update(TFLiteObjectDetectionAPIModel.lastRecognized, elapsedTime);
+                    //} catch (IOException | GeneralSecurityException e) {
+                  //    throw new RuntimeException(e);
+                  //  }
+                    rec.setStartTime(-1);
+                  }
                   return;
                 }
+
                 runInBackground(
                         new Runnable() {
                           @Override

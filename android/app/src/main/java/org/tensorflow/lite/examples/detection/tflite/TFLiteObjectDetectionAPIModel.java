@@ -53,6 +53,8 @@ public class TFLiteObjectDetectionAPIModel
 
   private static final Logger LOGGER = new Logger();
 
+  public static String lastRecognized;
+
   //private static final int OUTPUT_SIZE = 512;
   private static final int OUTPUT_SIZE = 192;
 
@@ -93,7 +95,7 @@ public class TFLiteObjectDetectionAPIModel
 // Face Mask Detector Output
   private float[][] output;
 
-  private HashMap<String, Recognition> registered = new HashMap<>();
+  public HashMap<String, Recognition> registered = new HashMap<>();
   public void register(String name, Recognition rec) {
       registered.put(name, rec);
   }
@@ -263,6 +265,14 @@ public class TFLiteObjectDetectionAPIModel
             label = name;
             distance = nearest.second;
 
+            Recognition rec = registered.get(name);
+            if(rec.getStartTime() == -1){
+              rec.setStartTime(System.currentTimeMillis());
+              LOGGER.e("started recognizing");
+            } else {
+              rec.setEndTime(System.currentTimeMillis());
+              lastRecognized = name;
+            }
             LOGGER.i("nearest: " + name + " - distance: " + distance);
 
 

@@ -58,6 +58,26 @@ public interface SimilarityClassifier {
     private Integer color;
     private Bitmap crop;
 
+    public long getStartTime() {
+      return startTime;
+    }
+
+    public void setStartTime(long startTime) {
+      this.startTime = startTime;
+    }
+
+    private long startTime = -1;
+
+    public long getEndTime() {
+      return endTime;
+    }
+
+    public void setEndTime(long endTime) {
+      this.endTime = endTime;
+    }
+
+    private long endTime;
+
     public Recognition(
             final String id, final String title, final Float distance, final RectF location) {
       this.id = id;
